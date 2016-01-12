@@ -1,4 +1,4 @@
-package com.bxtel.security5.filter;
+package com.bxtel;
 
 import javax.servlet.ServletContext;
 

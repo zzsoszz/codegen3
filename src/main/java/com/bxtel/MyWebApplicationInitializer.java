@@ -16,7 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-import com.bxtel.security5.filter.FilterChainProxy;
+import com.bxtel.security5.filter.VFilterChainProxy;
 
 
 /*

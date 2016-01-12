@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import com.bxtel.security5.auth.*;
 import com.bxtel.security5.auth.exceiption.AccessDeniedException;
+import com.bxtel.security5.auth.exceiption.AccountIsNotAuthenticatedException;
 import com.bxtel.security5.auth.exceiption.UserNotLogin;
 
 
@@ -64,15 +65,11 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 		public void setCheckRole(boolean checkRole) {
 			this.checkRole = checkRole;
 		}
-
-
-
 		private String pathtype="ant";
 		
 		public String getPathtype() {
 			return pathtype;
 		}
-
 		public void setPathtype(String pathtype) {
 			this.pathtype = pathtype;
 		}
@@ -94,8 +91,6 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 		public void doFilter(ServletRequest request, ServletResponse response,FilterChain filterChain) throws IOException, ServletException {
 			HttpServletRequest servletRequest = (HttpServletRequest) request;
 			HttpServletResponse servletResponse = (HttpServletResponse) response;
-//			org.springframework.boot.context.embedded.ServletContextInitializerBeans a;
-//			org.springframework.boot.context.embedded.FilterRegistrationBean
 			logger.debug("request url :"+servletRequest.getRequestURI());
 			if("ALL".equals(getProtectStrategy()))
 			{
@@ -103,7 +98,7 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 					if (logger.isDebugEnabled()) {
 						logger.debug("安全检查:"+servletRequest.getRequestURL());
 					}
-					HttpSession ses = servletRequest.getSession(true);
+					HttpSession ses = servletRequest.getSession(false);
 				    if(ses==null)
 					{
 						throw new UserNotLogin("session is not be created");
@@ -112,10 +107,6 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 					if(auth==null)
 					{
 						throw new UserNotLogin("user is not online");
-					}
-					if(auth==null || auth.isAuthenticated()==false)
-					{
-						throw new UserNotLogin("user is unAuthenticated");
 					}
 					Collection<IConfigAttribute> roles = securityMetadataSource.getAttributes(servletRequest);
 					if(roles==null)
@@ -145,7 +136,7 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 				Collection<IConfigAttribute> roles = securityMetadataSource.getAttributes(servletRequest);
 				if(roles!=null)
 				{
-					    HttpSession ses = servletRequest.getSession(true);
+					    HttpSession ses = servletRequest.getSession(false);
 					    if(ses==null)
 						{
 							throw new UserNotLogin("session is not be created");
@@ -153,11 +144,7 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 					    IAuthenticationResponse auth =(IAuthenticationResponse) ses.getAttribute("securitycontext");
 						if(auth==null)
 						{
-							throw new UserNotLogin("user is not online");
-						}
-						if(auth==null || auth.isAuthenticated()==false)
-						{
-							throw new UserNotLogin("user is unAuthenticated");
+							throw new AccountIsNotAuthenticatedException("user is not Authenticated");
 						}
 						if(isCheckRole())
 						{
@@ -177,7 +164,6 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 				else{
 					logger.debug("url need not sercurity :"+servletRequest.getRequestURI());
 				}
-				
 			}
 			filterChain.doFilter(request, response);
 		}

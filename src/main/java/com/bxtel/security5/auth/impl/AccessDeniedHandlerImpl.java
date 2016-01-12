@@ -26,7 +26,6 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     public AccessDeniedHandlerImpl() {
     	
     }
-
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         if (!response.isCommitted()) {
         	 boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));  

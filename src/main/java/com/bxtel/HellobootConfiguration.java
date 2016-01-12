@@ -40,7 +40,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.bxtel.security5.filter.FilterChainProxy;
+import com.bxtel.security5.filter.VFilterChainProxy;
 import com.bxtel.security5.filter.FilterSecurityInterceptorFilter;
 import com.bxtel.security5.filter.LogoutFilter;
 import com.bxtel.security5.filter.MyExceptionTranslationFilter;
@@ -93,8 +93,8 @@ public class HellobootConfiguration  implements CachingConfigurer {
 	
 	//@Order(Ordered.LOWEST_PRECEDENCE)
 	@Bean(name="springSecurityFilterChain2")
-	public FilterChainProxy filterChainProxy() {
-		FilterChainProxy f=new FilterChainProxy();
+	public VFilterChainProxy filterChainProxy() {
+		VFilterChainProxy f=new VFilterChainProxy();
 		Map<RequestMatcher, VFilterChain> filterChainMap = new HashMap<RequestMatcher, VFilterChain>() ;
 		VFilterChain none=new VFilterChain();
 		filterChainMap.put(new AntPathRequestMatcher("/js/**"), none);
@@ -112,10 +112,10 @@ public class HellobootConfiguration  implements CachingConfigurer {
 		beanFactory.autowireBean(rememberMeFiilter);
 		beanFactory.autowireBean(myExceptionTranslationFilter);
 		beanFactory.autowireBean(filterSecurityInterceptorFilter);
+		v.addFilter(myExceptionTranslationFilter);
 		v.addFilter(rememberMeFiilter);
 		v.addFilter(usernamePasswordLoginFilter);
 		v.addFilter(logoutFilter);
-		v.addFilter(myExceptionTranslationFilter);
 		v.addFilter(filterSecurityInterceptorFilter);
 		filterChainMap.put(new AntPathRequestMatcher("/**"), v);
 		f.setFilterChainMap(filterChainMap);

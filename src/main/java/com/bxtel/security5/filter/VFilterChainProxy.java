@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.web.filter.GenericFilterBean;
 import dinamica.util.matcher.RequestMatcher;
 
-public class FilterChainProxy extends GenericFilterBean {
+public class VFilterChainProxy extends GenericFilterBean {
 	//WebMvcAutoConfiguration aaa;
 	public Map<RequestMatcher, VFilterChain> filterChainMap;
 	@Override

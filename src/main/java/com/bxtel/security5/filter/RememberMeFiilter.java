@@ -2,10 +2,8 @@ package com.bxtel.security5.filter;
 /*
  * AbstractRememberMeServices
  * 
-
-http://javacrazyer.iteye.com/blog/769896
-http://javacrazyer.iteye.com/blog/769896
-
+	http://javacrazyer.iteye.com/blog/769896
+	http://javacrazyer.iteye.com/blog/769896
  */
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -17,9 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-
 import com.bxtel.security5.auth.IAuthenticationFailureHandler;
 import com.bxtel.security5.auth.IAuthenticationManager;
 import com.bxtel.security5.auth.IAuthenticationResponse;
@@ -42,11 +38,9 @@ public class RememberMeFiilter  extends GenericFilterBean {
 	public String getRequesturl() {
 		return requesturl;
 	}
-
 	public void setRequesturl(String requesturl) {
 		this.requesturl = requesturl;
 	}
-   
 	@Override
 	public void doFilter(ServletRequest arg0, ServletResponse arg1,
 			FilterChain filterChain) throws IOException, ServletException {
@@ -54,7 +48,6 @@ public class RememberMeFiilter  extends GenericFilterBean {
 		HttpServletRequest request = (HttpServletRequest) arg0;
 		HttpServletResponse response = (HttpServletResponse) arg1;
 		String cookieValue=extractRememberMeCookie(request);
-		
 		// && 
 		if(request.getRequestURI().endsWith(requesturl) && cookieValue!=null)
 		{
@@ -77,20 +70,17 @@ public class RememberMeFiilter  extends GenericFilterBean {
 					{
 						e.printStackTrace();
 					}
-					
 					if(username==null || password ==null || password.isEmpty() || username.isEmpty()  )
 					{
 						throw new UsernameNotFoundException("username and password must not be null");
 					}
 					UserNamePaswordAuthenticationRequest authRequest = new UserNamePaswordAuthenticationRequest(username, password);
 					IAuthenticationResponse authResult = authenticationManager.authenticate(authRequest);
-					if(authResult.isAuthenticated())
-					{
-						  if(successHandler!=null)
-						  {
-							successHandler.onAuthenticationSuccess(request, response, authResult);
-						  }
-					}
+					request.getSession(true).setAttribute("securitycontext", authResult);
+					if(successHandler!=null)
+					 {
+						successHandler.onAuthenticationSuccess(request, response, authResult);
+					 }
 				}else
 				{
 					//System.out.println("尝试其他方式登录");

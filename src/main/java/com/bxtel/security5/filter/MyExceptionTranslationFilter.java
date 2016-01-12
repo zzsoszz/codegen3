@@ -20,6 +20,7 @@ import org.springframework.security.web.util.ThrowableCauseExtractor;
 import org.springframework.stereotype.Component;
 
 import com.bxtel.security5.auth.AccessDeniedHandler;
+import com.bxtel.security5.auth.IAuthenticationFailureHandler;
 import com.bxtel.security5.auth.exceiption.AccessDeniedException;
 import com.bxtel.security5.auth.exceiption.AuthenticationException;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -38,10 +39,48 @@ public class MyExceptionTranslationFilter  extends GenericFilterBean{
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
     
+    @Autowired
+	private IAuthenticationFailureHandler failureHandler = null;
+	
     protected final Log logger = LogFactory.getLog(MyExceptionTranslationFilter.class);
     
-	private void handleSpringSecurityException(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-	            RuntimeException exception) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+
+        try {
+            chain.doFilter(request, response);
+            //logger.debug("Chain processed normally");
+        }
+        catch (IOException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            // Try to extract a SpringSecurityException from the stacktrace
+            Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
+            RuntimeException ase = (AuthenticationException) throwableAnalyzer.getFirstThrowableOfType(AuthenticationException.class, causeChain);
+            if (ase == null) {
+                ase = (AccessDeniedException)throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
+            }
+            if (ase != null) {
+                handleSpringSecurityException(request, response, chain, ase);
+            } else {
+                // Rethrow ServletExceptions and RuntimeExceptions as-is
+                if (ex instanceof ServletException) {
+                    throw (ServletException) ex;
+                }
+                else if (ex instanceof RuntimeException) {
+                    throw (RuntimeException) ex;
+                }
+                // Wrap other Exceptions. This shouldn't actually happen
+                // as we've already covered all the possibilities for doFilter
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+    
+	private void handleSpringSecurityException(HttpServletRequest request, HttpServletResponse response, FilterChain chain,RuntimeException exception) throws IOException, ServletException {
 		 if (exception instanceof AuthenticationException) {
 			 	boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 			 	if(isAjax)
@@ -55,16 +94,7 @@ public class MyExceptionTranslationFilter  extends GenericFilterBean{
 			 		requestCache.saveRequest(request, response);
 			 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 			 		logger.debug("MyExceptionTranslationFilter saveurl:"+savedRequest.getRedirectUrl());
-			 		if(HttpHelper.judgeIsWeiXin(request))
-			 		{
-			 			response.sendRedirect(request.getContextPath()+SecurityConfig.weixinentrypoint);
-			 		}else if(HttpHelper.judgeIsMoblie(request))
-			 		{
-				 		response.sendRedirect(request.getContextPath()+SecurityConfig.mobileentrypoint);
-			 		}else
-			 		{
-				 		response.sendRedirect(request.getContextPath()+SecurityConfig.entrypoint);
-			 		}
+			 		failureHandler.onAuthenticationFailure(request, response, (AuthenticationException) exception);
 			 	}
 	     }
 		 else if (exception instanceof AccessDeniedException) {
@@ -72,7 +102,6 @@ public class MyExceptionTranslationFilter  extends GenericFilterBean{
          }
 		 return ;
 	}
- 
 	
 	
 	private void outputJson(HttpServletRequest request, HttpServletResponse response, Response<String> resp)	throws IOException, JsonGenerationException, JsonMappingException {
@@ -89,6 +118,7 @@ public class MyExceptionTranslationFilter  extends GenericFilterBean{
 	}
 	
 	
+	
     private static final class DefaultThrowableAnalyzer extends ThrowableAnalyzer {
         protected void initExtractorMap() {
             super.initExtractorMap();
@@ -98,45 +128,6 @@ public class MyExceptionTranslationFilter  extends GenericFilterBean{
                     return ((ServletException) throwable).getRootCause();
                 }
             });
-        }
-    }
-    
-	 
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-
-        try {
-            chain.doFilter(request, response);
-            //logger.debug("Chain processed normally");
-        }
-        catch (IOException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
-            // Try to extract a SpringSecurityException from the stacktrace
-            Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
-            RuntimeException ase = (AuthenticationException) throwableAnalyzer.getFirstThrowableOfType(AuthenticationException.class, causeChain);
-            
-            if (ase == null) {
-                ase = (AccessDeniedException)throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
-            }
-            if (ase != null) {
-                handleSpringSecurityException(request, response, chain, ase);
-            } else {
-                // Rethrow ServletExceptions and RuntimeExceptions as-is
-                if (ex instanceof ServletException) {
-                    throw (ServletException) ex;
-                }
-                else if (ex instanceof RuntimeException) {
-                    throw (RuntimeException) ex;
-                }
-
-                // Wrap other Exceptions. This shouldn't actually happen
-                // as we've already covered all the possibilities for doFilter
-                throw new RuntimeException(ex);
-            }
         }
     }
 }
