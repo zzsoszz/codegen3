@@ -29,7 +29,6 @@ import com.bxtel.commons.Response;
 import dinamica.util.HttpHelper;
 import dinamica.util.JsonHelper;
 
-@Component
 public class MyExceptionTranslationFilter  extends GenericFilterBean{
 	
     private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();

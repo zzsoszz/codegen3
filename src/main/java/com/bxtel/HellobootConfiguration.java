@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.Filter;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -27,6 +28,8 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 //import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.http.HttpStatus;
@@ -61,21 +64,63 @@ public class HellobootConfiguration  implements CachingConfigurer {
 	    return factory;
 	}
 	
+//	@Autowired
+//	UsernamePasswordLoginFilter  usernamePasswordLoginFilter;
+//	
+//	@Autowired
+//	RememberMeFiilter  rememberMeFiilter;
+//	
+//	@Autowired
+//	MyExceptionTranslationFilter  myExceptionTranslationFilter;
+//	
+//	@Autowired
+//	FilterSecurityInterceptorFilter  filterSecurityInterceptorFilter;
+//	
+//	@Autowired
+//	LogoutFilter  logoutFilter;
+//	
 	@Autowired
-	UsernamePasswordLoginFilter  usernamePasswordLoginFilter;
+	private  AutowireCapableBeanFactory beanFactory;
 	
+//	@Bean
+//    public FilterRegistrationBean securityFilterChain(@Qualifier(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME) Filter securityFilter) {
+//        FilterRegistrationBean registration = new FilterRegistrationBean(securityFilter);
+//        registration.setOrder(0);
+//        registration.setEnabled(false);
+//        return registration;
+//    }
+//	
 	
-	@Autowired
-	RememberMeFiilter  rememberMeFiilter;
-	
-	@Autowired
-	MyExceptionTranslationFilter  myExceptionTranslationFilter;
-	
-	@Autowired
-	FilterSecurityInterceptorFilter  filterSecurityInterceptorFilter;
-	
-	@Autowired
-	LogoutFilter  logoutFilter;
+	//@Order(Ordered.LOWEST_PRECEDENCE)
+	@Bean(name="springSecurityFilterChain2")
+	public FilterChainProxy filterChainProxy() {
+		FilterChainProxy f=new FilterChainProxy();
+		Map<RequestMatcher, VFilterChain> filterChainMap = new HashMap<RequestMatcher, VFilterChain>() ;
+		VFilterChain none=new VFilterChain();
+		filterChainMap.put(new AntPathRequestMatcher("/js/**"), none);
+		filterChainMap.put(new AntPathRequestMatcher("/css/**"), none);
+		filterChainMap.put(new AntPathRequestMatcher("/images/**"), none);
+		filterChainMap.put(new AntPathRequestMatcher("/js/**"), none);
+		filterChainMap.put(new AntPathRequestMatcher("/**/*.jsp"),none);
+		VFilterChain v=new VFilterChain();
+		UsernamePasswordLoginFilter  usernamePasswordLoginFilter=new UsernamePasswordLoginFilter();
+		RememberMeFiilter  rememberMeFiilter=new RememberMeFiilter();
+		MyExceptionTranslationFilter  myExceptionTranslationFilter=new MyExceptionTranslationFilter();
+		FilterSecurityInterceptorFilter  filterSecurityInterceptorFilter=new FilterSecurityInterceptorFilter();
+		LogoutFilter  logoutFilter=new LogoutFilter();
+		beanFactory.autowireBean(usernamePasswordLoginFilter);
+		beanFactory.autowireBean(rememberMeFiilter);
+		beanFactory.autowireBean(myExceptionTranslationFilter);
+		beanFactory.autowireBean(filterSecurityInterceptorFilter);
+		v.addFilter(rememberMeFiilter);
+		v.addFilter(usernamePasswordLoginFilter);
+		v.addFilter(logoutFilter);
+		v.addFilter(myExceptionTranslationFilter);
+		v.addFilter(filterSecurityInterceptorFilter);
+		filterChainMap.put(new AntPathRequestMatcher("/**"), v);
+		f.setFilterChainMap(filterChainMap);
+	    return f;
+	}
 	
 	/*
 	 * http://www.leveluplunch.com/blog/2014/04/01/spring-boot-configure-servlet-mapping-filters/]
@@ -83,41 +128,22 @@ public class HellobootConfiguration  implements CachingConfigurer {
 	 *  Support optionally disabling Filters and Servlets if they show up as @Beans #655 
 	 * https://github.com/spring-projects/spring-boot/issues/655
 	 */
-	@Bean
-    public FilterSecurityInterceptorFilter filterSecurityInterceptorFilter() {
-		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        return new FilterSecurityInterceptorFilter();
-    }
+//	@Bean
+//    public FilterSecurityInterceptorFilter filterSecurityInterceptorFilter() {
+//		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+//        return new FilterSecurityInterceptorFilter();
+//    }
 	
-	@Bean(name="filterRegistrationBean")
-    public FilterRegistrationBean filterRegistrationBean() {
-		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-		registrationBean.setFilter(new FilterSecurityInterceptorFilter());
-		registrationBean.setEnabled(false);
-        return registrationBean;
-    }
+//	@Bean(name="filterRegistrationBean")
+//    public FilterRegistrationBean filterRegistrationBean() {
+//		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+//		registrationBean.setFilter(new FilterSecurityInterceptorFilter());
+//		registrationBean.setEnabled(false);
+//        return registrationBean;
+//    }
 	
-//	
-//	@Bean(name="springSecurityFilterChain2")
-//	public FilterChainProxy filterChainProxy() {
-//		FilterChainProxy f=new FilterChainProxy();
-//		Map<RequestMatcher, VFilterChain> filterChainMap = new HashMap<RequestMatcher, VFilterChain>() ;
-//		VFilterChain none=new VFilterChain();
-//		filterChainMap.put(new AntPathRequestMatcher("/js/**"), none);
-//		filterChainMap.put(new AntPathRequestMatcher("/css/**"), none);
-//		filterChainMap.put(new AntPathRequestMatcher("/images/**"), none);
-//		filterChainMap.put(new AntPathRequestMatcher("/js/**"), none);
-//		filterChainMap.put(new AntPathRequestMatcher("/**/*.jsp"),none);
-//		
-//		VFilterChain v=new VFilterChain();
-//		v.addFilter(usernamePasswordLoginFilter);
-//		v.addFilter(logoutFilter);
-//		v.addFilter(myExceptionTranslationFilter);
-//		v.addFilter(filterSecurityInterceptorFilter);
-//		filterChainMap.put(new AntPathRequestMatcher("/**"), v);
-//		f.setFilterChainMap(filterChainMap);
-//	    return f;
-//	}
+	
+	
 	
 	
 	

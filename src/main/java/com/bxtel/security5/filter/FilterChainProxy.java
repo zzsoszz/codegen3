@@ -13,7 +13,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import dinamica.util.matcher.RequestMatcher;
 
 public class FilterChainProxy extends GenericFilterBean {
-	WebMvcAutoConfiguration aaa;
+	//WebMvcAutoConfiguration aaa;
 	public Map<RequestMatcher, VFilterChain> filterChainMap;
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)throws IOException, ServletException {

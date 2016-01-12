@@ -29,7 +29,6 @@ import com.bxtel.security5.auth.exceiption.UsernameNotFoundException;
 import com.bxtel.security5.auth.impl.UserNamePaswordAuthenticationRequest;
 import dinamica.coder.ThreeDesHelper2;
 
-@Component
 public class RememberMeFiilter  extends GenericFilterBean {
 	public static final String DELIMITER=":";
 	public static final String SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY = "SECURITY_REMEMBER_ME_COOKIE";

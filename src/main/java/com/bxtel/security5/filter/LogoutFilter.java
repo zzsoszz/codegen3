@@ -13,8 +13,6 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dinamica.util.JsonHelper;
-
-@Component
 public class LogoutFilter extends GenericFilterBean  {
 	String requesturl="/j_spring_security_logout";
 	String successurl;

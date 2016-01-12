@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -16,17 +18,17 @@ import com.bxtel.security5.auth.exceiption.UsernameNotFoundException;
 import com.bxtel.security5.auth.impl.UserNamePaswordAuthenticationRequest;
 import dinamica.coder.ThreeDesHelper2;
 
-@Component
+
 public class UsernamePasswordLoginFilter extends GenericFilterBean  {
 	
 	String requesturl="/j_spring_security_check";
 	
-	String entrypoint;
-	
+	String entrypoint=SecurityConfig.entrypoint;
+	@Autowired
 	private IAuthenticationManager  authenticationManager;
-	
+	@Autowired
 	private IAuthenticationSuccessHandler successHandler = null;
-    
+	@Autowired
 	private IAuthenticationFailureHandler failureHandler = null;
 	
 	private String getCookiePath(HttpServletRequest request) {

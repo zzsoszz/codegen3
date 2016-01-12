@@ -3,12 +3,15 @@ package com.bxtel;
 import java.io.File;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
+import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -23,11 +26,17 @@ import com.bxtel.security5.filter.FilterChainProxy;
  */
 @Order(2)  
 public class MyWebApplicationInitializer implements WebApplicationInitializer{
+	
+//	@Resource
+//	@Qualifier("springSecurityFilterChain2")
+//	Filter securityFilter;
+//	
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		//servletContext.addFilter("securityFilter",new DelegatingFilterProxy("springSecurityFilterChain")).addMappingForUrlPatterns(null, false, "/*");
 		//System.out.println("aaaaaaaa:"+servletContext);
 		//servletContext.addFilter("mySecurityFilter",new FilterChainProxy());
+		//servletContext.addFilter("mySecurityFilter",securityFilter);
 		for(Entry<String, ? extends FilterRegistration> one:servletContext.getFilterRegistrations().entrySet())
 		{
 			System.out.println("ccccccc"+one.getKey()+"   "+one.getValue());
