@@ -4,5 +4,4 @@ import java.util.List;
 public interface IAuthenticationResponse<T>{
     T  getUserData();
     ArrayList<String> getAuthorities();
-    boolean isAuthenticated();
 }

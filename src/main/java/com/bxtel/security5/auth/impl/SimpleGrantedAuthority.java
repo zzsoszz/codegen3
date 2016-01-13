@@ -12,7 +12,7 @@ public final class SimpleGrantedAuthority implements IGrantedAuthority {
         Assert.hasText(role, "A granted authority textual representation is required");
         this.role = role;
     }
-
+    
     public String getAuthority() {
         return role;
     }
@@ -21,11 +21,9 @@ public final class SimpleGrantedAuthority implements IGrantedAuthority {
         if (this == obj) {
             return true;
         }
-
         if (obj instanceof SimpleGrantedAuthority) {
             return role.equals(((SimpleGrantedAuthority) obj).role);
         }
-
         return false;
     }
 

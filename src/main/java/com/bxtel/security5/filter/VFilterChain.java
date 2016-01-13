@@ -18,6 +18,7 @@ public class VFilterChain implements   FilterChain{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 		if(index==filterList.size()){
+			index=0;
 			return;//如果链条里没有filter或是链条里的filter都调用过了（有点象递归）
 		}else{
 			filterList.get(index++).doFilter(request, response,this);

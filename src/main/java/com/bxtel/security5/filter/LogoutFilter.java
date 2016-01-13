@@ -1,12 +1,9 @@
 package com.bxtel.security5.filter;
 
 import java.io.IOException;
-
 import java.io.PrintWriter;
 import javax.servlet.*;
 import javax.servlet.http.*;
-
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import com.bxtel.commons.Response;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -14,10 +11,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dinamica.util.JsonHelper;
 
-@Component
 public class LogoutFilter extends GenericFilterBean  {
 	String requesturl="/j_spring_security_logout";
-	String successurl;
+	String successurl=SecurityConfig.entrypoint;
 	public void doFilter(ServletRequest request0, ServletResponse response0,
 			FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) request0;

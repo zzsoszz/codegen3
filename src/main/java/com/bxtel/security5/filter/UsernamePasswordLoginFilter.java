@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -13,21 +15,21 @@ import com.bxtel.security5.auth.IAuthenticationResponse;
 import com.bxtel.security5.auth.IAuthenticationSuccessHandler;
 import com.bxtel.security5.auth.exceiption.AuthenticationException;
 import com.bxtel.security5.auth.exceiption.UsernameNotFoundException;
+import com.bxtel.security5.auth.exceiption.UsernameOrPassowrdNoMatchException;
 import com.bxtel.security5.auth.impl.UserNamePaswordAuthenticationRequest;
 import dinamica.coder.ThreeDesHelper2;
 
-@Component
+
 public class UsernamePasswordLoginFilter extends GenericFilterBean  {
-	
 	String requesturl="/j_spring_security_check";
-	
-	String entrypoint;
-	
+	String entrypoint=SecurityConfig.entrypoint;
+	@Autowired
 	private IAuthenticationManager  authenticationManager;
-	
+	@Autowired
 	private IAuthenticationSuccessHandler successHandler = null;
-    
+	@Autowired
 	private IAuthenticationFailureHandler failureHandler = null;
+	
 	
 	private String getCookiePath(HttpServletRequest request) {
 	        String contextPath = request.getContextPath();
@@ -36,73 +38,51 @@ public class UsernamePasswordLoginFilter extends GenericFilterBean  {
 	
 	public void doFilter(ServletRequest request0, ServletResponse response1,
 			FilterChain filterChain) throws IOException, ServletException {
-		// TODO Auto-generated method stub
 		HttpServletRequest request = (HttpServletRequest) request0;
 		HttpServletResponse response = (HttpServletResponse) response1;
 		if(request.getRequestURI().endsWith(requesturl))
 		{
 			String username=request.getParameter("j_username");
 			String password=request.getParameter("j_password");
-			try{
-				if(username==null || password ==null || password.isEmpty() || username.isEmpty()  )
-				{
-					throw new UsernameNotFoundException("username and password must not be null");
-				}
-				UserNamePaswordAuthenticationRequest authRequest = new UserNamePaswordAuthenticationRequest(username, password);
-				IAuthenticationResponse authResult = authenticationManager.authenticate(authRequest);
-				if(authResult.isAuthenticated())
-				{
-					request.getSession(true).setAttribute("securitycontext", authResult);
-					//保存登录信息到cookie 用户于RememberMeFiilter---start
-					String autologin=request.getParameter("autologin");//true 自动登录   
-					if("true".equals(autologin))
-					{
-						  int seconds=7*24*60*60;//保存7天
-			              long expiretime=System.currentTimeMillis()+seconds;
-			              String cookievalue=null;
-			              String cookievaluebase64=null;
-			              try {
-							cookievalue = new Long(expiretime).toString()+RememberMeFiilter.DELIMITER+new String(Base64.encode(username.getBytes()))+RememberMeFiilter.DELIMITER+ThreeDesHelper2.encode(password);
-							cookievaluebase64=new String(Base64.encode(cookievalue.getBytes()));
-			              } catch (Exception e) {
-							  e.printStackTrace();
-						  }
-			              Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY,cookievaluebase64);  
-			   			  cookie.setMaxAge(Integer.MAX_VALUE);
-			   			  cookie.setPath(RememberMeFiilter.getCookiePath(request));
-			   			  response.addCookie(cookie);
-					}else{
-						Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
-					    cookie.setMaxAge(0);
-					    cookie.setPath(getCookiePath(request));
-					    response.addCookie(cookie);
-					}
-					//---------------------------------------------end
-					if(successHandler!=null)
-					{
-						successHandler.onAuthenticationSuccess(request, response, authResult);
-					}
-					return ;
-				}
-				else{
-					throw new Exception("user authentication failed");
-				}
-			}catch (AuthenticationException e) {
-				//e.printStackTrace();
-	            if(failureHandler!=null)
-	            {
-	            	failureHandler.onAuthenticationFailure(request, response, e);
-	            }
-	            return;
-	        } catch (Exception e) {
-	        	e.printStackTrace();
-	        	response.sendRedirect(request.getContextPath()+entrypoint);
-	            return;
+			if(username==null || password ==null || password.isEmpty() || username.isEmpty()  )
+			{
+				throw new UsernameNotFoundException("username and password must not be null");
 			}
-			
-			
-			
-			
+			UserNamePaswordAuthenticationRequest authRequest = new UserNamePaswordAuthenticationRequest(username, password);
+			IAuthenticationResponse authResult = authenticationManager.authenticate(authRequest);
+			request.getSession(true).setAttribute("securitycontext", authResult);
+			//保存登录信息到cookie 用户于RememberMeFiilter---start
+			String autologin=request.getParameter("autologin");//true 自动登录   
+			if("true".equals(autologin))
+			{
+				  int seconds=7*24*60*60;//保存7天
+	              long expiretime=System.currentTimeMillis()+seconds;
+	              String cookievalue=null;
+	              String cookievaluebase64=null;
+	              try {
+					cookievalue = new Long(expiretime).toString()+RememberMeFiilter.DELIMITER+new String(Base64.encode(username.getBytes()))+RememberMeFiilter.DELIMITER+ThreeDesHelper2.encode(password);
+					cookievaluebase64=new String(Base64.encode(cookievalue.getBytes()));
+	              } catch (Exception e) {
+					  e.printStackTrace();
+				  }
+	              Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY,cookievaluebase64);  
+	   			  cookie.setMaxAge(Integer.MAX_VALUE);
+	   			  cookie.setPath(RememberMeFiilter.getCookiePath(request));
+	   			  response.addCookie(cookie);
+			}
+			else
+			{
+				Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
+			    cookie.setMaxAge(0);
+			    cookie.setPath(getCookiePath(request));
+			    response.addCookie(cookie);
+			}
+			//---------------------------------------------end
+			if(successHandler!=null)
+			{
+				successHandler.onAuthenticationSuccess(request, response, authResult);
+			}
+			return;
 		}
 		filterChain.doFilter(request0, response1);
 	}

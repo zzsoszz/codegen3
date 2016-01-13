@@ -44,6 +44,10 @@ public class SystemInitServlet extends HttpServlet{
 		{
 			String key=it.next();//TongchengClient BxBankCardTBO
 			System.out.println("key:"+key+"   value:"+aa.get(key));
+			if(key.equals("logoutFilter"))
+			{
+				
+			}
 		}
 		SmsBO  smsbo=(SmsBO) ctx.getBean(SmsBO.class);
 		Sms model=new Sms();
