@@ -27,7 +27,7 @@ public class MyWebApplicationInitializer implements WebApplicationInitializer{
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		//servletContext.addFilter("securityFilter",new DelegatingFilterProxy("springSecurityFilterChain")).addMappingForUrlPatterns(null, false, "/*");
 		//System.out.println("aaaaaaaa:"+servletContext);
-		//servletContext.addFilter("mySecurityFilter",new FilterChainProxy());
+		servletContext.addFilter("mySecurityFilter",new FilterChainProxy());
 		for(Entry<String, ? extends FilterRegistration> one:servletContext.getFilterRegistrations().entrySet())
 		{
 			System.out.println("ccccccc"+one.getKey()+"   "+one.getValue());
