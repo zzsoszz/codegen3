@@ -30,6 +30,7 @@ public class UsernamePasswordLoginFilter extends GenericFilterBean  {
 	@Autowired
 	private IAuthenticationFailureHandler failureHandler = null;
 	
+	
 	private String getCookiePath(HttpServletRequest request) {
 	        String contextPath = request.getContextPath();
 	        return contextPath.length() > 0 ? contextPath : "/";
@@ -37,7 +38,6 @@ public class UsernamePasswordLoginFilter extends GenericFilterBean  {
 	
 	public void doFilter(ServletRequest request0, ServletResponse response1,
 			FilterChain filterChain) throws IOException, ServletException {
-		// TODO Auto-generated method stub
 		HttpServletRequest request = (HttpServletRequest) request0;
 		HttpServletResponse response = (HttpServletResponse) response1;
 		if(request.getRequestURI().endsWith(requesturl))

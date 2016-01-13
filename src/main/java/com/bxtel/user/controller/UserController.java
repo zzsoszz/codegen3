@@ -38,6 +38,9 @@ public class UserController extends MultiActionController {
 	@Autowired
 	public UserBO  bo;
     
+	@Autowired
+	
+	
     private static final Log logger = LogFactory.getLog(UserController.class);
     
     @RequestMapping(value = "docreate")
@@ -49,8 +52,10 @@ public class UserController extends MultiActionController {
     @RequestMapping(value = "dologin")
     @ResponseBody
     public User dologin(@RequestBody Request<User> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
+    	
     	return null;
 	}
+    
     
     /*
      * search_LIKE_title
