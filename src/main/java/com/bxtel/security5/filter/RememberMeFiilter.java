@@ -44,7 +44,6 @@ public class RememberMeFiilter  extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest arg0, ServletResponse arg1,
 			FilterChain filterChain) throws IOException, ServletException {
-		
 		HttpServletRequest request = (HttpServletRequest) arg0;
 		HttpServletResponse response = (HttpServletResponse) arg1;
 		String cookieValue=extractRememberMeCookie(request);
@@ -78,9 +77,9 @@ public class RememberMeFiilter  extends GenericFilterBean {
 					IAuthenticationResponse authResult = authenticationManager.authenticate(authRequest);
 					request.getSession(true).setAttribute("securitycontext", authResult);
 					if(successHandler!=null)
-					 {
+					{
 						successHandler.onAuthenticationSuccess(request, response, authResult);
-					 }
+					}
 				}else
 				{
 					//System.out.println("尝试其他方式登录");

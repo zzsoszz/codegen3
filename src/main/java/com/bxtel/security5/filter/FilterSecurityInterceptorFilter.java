@@ -42,21 +42,11 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 		//需要保护的资源
 		@Resource
 		private ISecurityMetadataSource securityMetadataSource;
-		//不需要保护的资源
-		private HashMap unSecurityMetadataSource;
+		
+		@Resource
+		MySecurityContextHolder mySecurityContextHolder;
 		
 		private boolean checkRole=true;
-		
-		//保护策略 SR 只保护安全资源  ALL保护所有资源
-		public  String protectStrategy="SR";
-		
-		public String getProtectStrategy() {
-			return protectStrategy;
-		}
-
-		public void setProtectStrategy(String protectStrategy) {
-			this.protectStrategy = protectStrategy;
-		}
 		
 		public boolean isCheckRole() {
 			return checkRole;
@@ -73,45 +63,19 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 		public void setPathtype(String pathtype) {
 			this.pathtype = pathtype;
 		}
-		
-		public HashMap getUnSecurityMetadataSource() {
-			return unSecurityMetadataSource;
-		}
-
-		public void setUnSecurityMetadataSource(HashMap unSecurityMetadataSource) {
-			this.unSecurityMetadataSource = unSecurityMetadataSource;
-		}
-		public ISecurityMetadataSource getSecurityMetadataSource() {
-			return securityMetadataSource;
-		}
-		public void setSecurityMetadataSource(ISecurityMetadataSource securityMetadataSource) {
-			this.securityMetadataSource = securityMetadataSource;
-		}
-
 		public void doFilter(ServletRequest request, ServletResponse response,FilterChain filterChain) throws IOException, ServletException {
 			HttpServletRequest servletRequest = (HttpServletRequest) request;
 			HttpServletResponse servletResponse = (HttpServletResponse) response;
 			logger.debug("request url :"+servletRequest.getRequestURI());
-			if("ALL".equals(getProtectStrategy()))
+			//只检查需要角色的资源
+			Collection<IConfigAttribute> roles = securityMetadataSource.getAttributes(servletRequest);
+			if(roles!=null)
 			{
-				if(isNeedSecurityCheck(servletRequest,servletResponse)){
-					if (logger.isDebugEnabled()) {
-						logger.debug("安全检查:"+servletRequest.getRequestURL());
-					}
-					HttpSession ses = servletRequest.getSession(false);
-				    if(ses==null)
-					{
-						throw new UserNotLogin("session is not be created");
-					}
-				    IAuthenticationResponse auth =(IAuthenticationResponse) ses.getAttribute("securitycontext");
+				    
+				    IAuthenticationResponse auth =mySecurityContextHolder.getSecurityContext(servletRequest);
 					if(auth==null)
 					{
-						throw new UserNotLogin("user is not online");
-					}
-					Collection<IConfigAttribute> roles = securityMetadataSource.getAttributes(servletRequest);
-					if(roles==null)
-					{
-						throw new AccessDeniedException("Access is denied : resource "+servletRequest.getRequestURL()+" have no roles ");
+						throw new AccountIsNotAuthenticatedException("user is not Authenticated");
 					}
 					if(isCheckRole())
 					{
@@ -122,75 +86,17 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 						}
 						if(!decide(roles,authorities))
 						{
-							//验证失败跳转到failedurl指定的页面
-							//servletResponse.sendRedirect(servletRequest.getContextPath()+failedurl);
 							throw new AccessDeniedException("Access is denied");
 						}
 					}
-					
-				}else{
-					logger.debug("url need not sercurity :"+servletRequest.getRequestURI());
-				}
-			}else{
-				//只检查需要角色的资源
-				Collection<IConfigAttribute> roles = securityMetadataSource.getAttributes(servletRequest);
-				if(roles!=null)
-				{
-					    HttpSession ses = servletRequest.getSession(false);
-					    if(ses==null)
-						{
-							throw new UserNotLogin("session is not be created");
-						}
-					    IAuthenticationResponse auth =(IAuthenticationResponse) ses.getAttribute("securitycontext");
-						if(auth==null)
-						{
-							throw new AccountIsNotAuthenticatedException("user is not Authenticated");
-						}
-						if(isCheckRole())
-						{
-							Collection<? extends IGrantedAuthority> authorities = auth.getAuthorities();
-							if(authorities==null)
-							{
-							  	throw new AccessDeniedException("Access is denied : user have no privilege in path "+servletRequest.getRequestURI());
-							}
-							if(!decide(roles,authorities))
-							{
-								//验证失败跳转到failedurl指定的页面
-								//servletResponse.sendRedirect(servletRequest.getContextPath()+failedurl);
-								throw new AccessDeniedException("Access is denied");
-							}
-						}
-				}
-				else{
-					logger.debug("url need not sercurity :"+servletRequest.getRequestURI());
-				}
+			}
+			else{
+				logger.debug("url need not sercurity :"+servletRequest.getRequestURI());
 			}
 			filterChain.doFilter(request, response);
 		}
 		
 		
-		private boolean isNeedSecurityCheck(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-			logger.debug(unSecurityMetadataSource.keySet().size());
-			Iterator it = unSecurityMetadataSource.keySet().iterator();
-			while(it.hasNext())
-			{
-				String key=(String) it.next();
-				pathtype=(String) unSecurityMetadataSource.get(key);
-				RequestMatcher  rm=null;
-				if("regex".equals(pathtype))
-				{
-					rm=new RegexRequestMatcher(key,servletRequest.getMethod());
-				}else
-				{
-					rm=new AntPathRequestMatcher(key);
-				}
-				if(rm.matches(servletRequest))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
 		public boolean decide(Collection<IConfigAttribute> configroles,Collection<? extends IGrantedAuthority> authorities)
 		{
 			for(IConfigAttribute config:configroles)

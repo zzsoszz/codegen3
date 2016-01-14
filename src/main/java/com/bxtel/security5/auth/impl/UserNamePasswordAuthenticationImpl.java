@@ -19,7 +19,7 @@ public class UserNamePasswordAuthenticationImpl implements IAuthentication{
 	@Override
 	public IAuthenticationResponse authenticate(AbsAuthenticationRequest authentication) throws AuthenticationException {
 		UserNamePaswordAuthenticationRequest req=(UserNamePaswordAuthenticationRequest)authentication;
-		User user=dao.findByMobileAndPassword(req.getUsername(),req.getUsername());
+		User user=dao.findByMobileAndPassword(req.getUsername(),req.getPassword());
 		ArrayList<String> authorities=new ArrayList<String>();
 		authorities.add("USER");
 		UserNamePaswordAuthenticationResponse resp=new UserNamePaswordAuthenticationResponse(user,authorities);

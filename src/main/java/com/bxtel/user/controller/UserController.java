@@ -7,6 +7,9 @@ import com.bxtel.commons.Request;
 import com.bxtel.commons.Response;
 import com.bxtel.commons.SearchData;
 import com.bxtel.exception.BusinessException;
+import com.bxtel.security5.auth.IAuthenticationManager;
+import com.bxtel.security5.auth.IAuthenticationSuccessHandler;
+
 import java.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.data.domain.Page;
@@ -37,12 +40,15 @@ public class UserController extends MultiActionController {
 	
 	@Autowired
 	public UserBO  bo;
-    
-	@Autowired
-	
 	
     private static final Log logger = LogFactory.getLog(UserController.class);
     
+    @Autowired
+	private IAuthenticationManager  authenticationManager;
+	@Autowired
+	private IAuthenticationSuccessHandler successHandler = null;
+	
+	
     @RequestMapping(value = "docreate")
     @ResponseBody
     public User docreate(@RequestBody Request<User> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
@@ -55,7 +61,6 @@ public class UserController extends MultiActionController {
     	
     	return null;
 	}
-    
     
     /*
      * search_LIKE_title

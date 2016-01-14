@@ -1,16 +1,10 @@
 package com.bxtel;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
-
-import java.io.File;
-
-import javax.servlet.ServletException;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.startup.Tomcat;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,6 +15,7 @@ import org.springframework.context.annotation.ImportResource;
 //import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 //import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -48,13 +43,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ServletComponentScan
 @EnableAspectJAutoProxy
 @EnableCaching
-@EnableTransactionManagement 
+@EnableTransactionManagement
+@EnableRedisHttpSession
 //@EnableWebMvcSecurity
 //@EnableElasticsearchRepositories(basePackages = "com/bxtel/search")
 //@EnableJpaRepositories(basePackages = "com/bxtel/dao")
 @EnableJpaRepositories(basePackages = "com/bxtel",includeFilters={@ComponentScan.Filter(type=FilterType.ANNOTATION, value=Repository.class)})
 public class HellobootApplication extends SpringBootServletInitializer{
 	//ServletComponentScan ss;
+	//RedisProperties aa;
+	//http://www.open-open.com/lib/view/open1436322883958.html
+	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(HellobootApplication.class);
