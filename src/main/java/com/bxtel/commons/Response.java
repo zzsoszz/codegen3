@@ -1,11 +1,9 @@
 package com.bxtel.commons;
-
+import dinamica.util.JsonHelper;
 public class Response<T> {
-	
 	String returncode;//00000001  00000002 
 	String returnmsg;//
 	T data;
-	
 	public T getData() {
 		return data;
 	}
@@ -23,5 +21,12 @@ public class Response<T> {
 	}
 	public void setReturnmsg(String returnmsg) {
 		this.returnmsg = returnmsg;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Response resp=new Response();
+		resp.setReturncode("00000000");
+		resp.setReturnmsg("处理成功!");
+		System.out.println(JsonHelper.getObjectMapperInstance().writeValueAsString(resp));
 	}
 }

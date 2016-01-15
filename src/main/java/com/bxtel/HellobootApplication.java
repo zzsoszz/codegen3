@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ImportResource;
 //import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+//import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 //import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAspectJAutoProxy
 @EnableCaching
 @EnableTransactionManagement
-@EnableRedisHttpSession
+//@EnableRedisHttpSession
 //@EnableWebMvcSecurity
 //@EnableElasticsearchRepositories(basePackages = "com/bxtel/search")
 //@EnableJpaRepositories(basePackages = "com/bxtel/dao")

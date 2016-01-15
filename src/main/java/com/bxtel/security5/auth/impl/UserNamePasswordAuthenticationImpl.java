@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.bxtel.security5.auth.AbsAuthenticationRequest;
 import com.bxtel.security5.auth.IAuthenticationResponse;
 import com.bxtel.security5.auth.exceiption.AuthenticationException;
+import com.bxtel.security5.auth.exceiption.UsernameNotFoundException;
 import com.bxtel.user.dao.UserRepository;
 import com.bxtel.user.model.User;
 
@@ -20,6 +21,10 @@ public class UserNamePasswordAuthenticationImpl implements IAuthentication{
 	public IAuthenticationResponse authenticate(AbsAuthenticationRequest authentication) throws AuthenticationException {
 		UserNamePaswordAuthenticationRequest req=(UserNamePaswordAuthenticationRequest)authentication;
 		User user=dao.findByMobileAndPassword(req.getUsername(),req.getPassword());
+		if(user==null)
+		{
+			throw new UsernameNotFoundException("user not exist");
+		}
 		ArrayList<String> authorities=new ArrayList<String>();
 		authorities.add("USER");
 		UserNamePaswordAuthenticationResponse resp=new UserNamePaswordAuthenticationResponse(user,authorities);

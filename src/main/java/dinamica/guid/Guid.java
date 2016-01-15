@@ -9,6 +9,7 @@ import java.util.Random;
 //import org.apache.commons.id.random.SessionIdGenerator;
 //import org.apache.commons.id.serial.AlphanumericGenerator;
 //import org.apache.commons.id.serial.LongGenerator;
+import java.util.UUID;
 
 import dinamica.util.DateHelper;
 
@@ -16,9 +17,10 @@ public class Guid {
 
 
 	public static void main(String[] args) throws Exception {
-		for (int i = 0; i < 1000000; i++) {
-			System.out.println(Guid.getUniqueIdWithNaos());
-		}
+		System.out.println(genRandom(1));;
+//		for (int i = 0; i < 1000000; i++) {
+//			System.out.println(Guid.getUniqueIdWithNaos());
+//		}
 	}
 
 	public static String getUniqueId() 
@@ -54,18 +56,32 @@ public class Guid {
 		String guid=timestamp+DateHelper.getNanos();
 		return guid;
 	}
-	
+	public static String getUUID(){ 
+        String s = UUID.randomUUID().toString(); 
+        //去掉“-”符号 
+        return s.substring(0,8)+s.substring(9,13)+s.substring(14,18)+s.substring(19,23)+s.substring(24); 
+    }
+//	
+//	public  static String  genRandom(int num)
+//	{
+//		StringBuffer result=new StringBuffer("");
+//		Random rd = new Random();
+//		for(int i=0;i<num;i++)
+//		{
+//			result.append(rd.nextInt(10) + "");
+//		}
+//		return result.toString();
+//	}
+//	
 	
 	public  static String  genRandom(int num)
 	{
-		StringBuffer result=new StringBuffer("");
-		Random rd = new Random();
+		StringBuffer one=new StringBuffer("1");
 		for(int i=0;i<num;i++)
 		{
-			result.append(rd.nextInt(10) + "");
+			one.append("0");
 		}
-		return result.toString();
+		long i=(long) (Math.random()*Long.parseLong(one.toString()));
+		return new Long(i).toString();
 	}
-	
-
 }

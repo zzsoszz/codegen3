@@ -4,6 +4,7 @@ import java.util.Enumeration;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -20,6 +21,10 @@ import com.bxtel.commons.SearchData;
 import com.bxtel.sms.bo.SmsBO;
 import com.bxtel.sms.controller.SmsController;
 import com.bxtel.sms.model.Sms;
+import com.bxtel.user.bo.UserBO;
+import com.bxtel.user.model.User;
+
+import dinamica.coder.MD5Helper;
 
 
 //@WebServlet(name="systemInitServlet")  
@@ -55,7 +60,19 @@ public class SystemInitServlet extends HttpServlet{
 		model.setContent("hello boy !!!");
 		model.setStatus("1");
 		smsbo.add(model);
-		
+		 
+		UserBO  userbo=(UserBO) ctx.getBean(UserBO.class);
+		Map<String, Object> searchParams=new HashMap<String, Object>();
+		searchParams.put("EQ_mobile", "13730666347");
+		List<User> u=userbo.search(searchParams, null);
+		if(u==null || u.size()==0)
+		{
+			User data=new User();
+			data.setMobile("13730666347");
+			data.setPassword(MD5Helper.md5("123456"));
+			data.setType("1");
+			userbo.add(data);
+		}
 		
 		SmsController  sms=(SmsController) ctx.getBean(SmsController.class);
 		Request req=new Request();

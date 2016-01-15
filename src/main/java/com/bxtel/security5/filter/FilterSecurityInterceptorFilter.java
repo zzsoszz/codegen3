@@ -71,7 +71,6 @@ public class FilterSecurityInterceptorFilter extends GenericFilterBean  {
 			Collection<IConfigAttribute> roles = securityMetadataSource.getAttributes(servletRequest);
 			if(roles!=null)
 			{
-				    
 				    IAuthenticationResponse auth =mySecurityContextHolder.getSecurityContext(servletRequest);
 					if(auth==null)
 					{

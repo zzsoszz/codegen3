@@ -13,7 +13,6 @@ public class SecurityData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
 	@NotNull
 	private String path;
 	@NotNull

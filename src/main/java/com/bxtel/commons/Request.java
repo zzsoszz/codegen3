@@ -3,6 +3,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import com.bxtel.user.model.User;
+import com.bxtel.user.vo.RegistInfo;
+
+import dinamica.coder.RSACoderTest;
+import dinamica.util.JsonHelper;
+
 public class Request<T> {
 	@NotNull
 	String imsi;
@@ -49,5 +55,27 @@ public class Request<T> {
 
 	public void setData(T data) {
 		this.data = data;
+	}
+	
+	public static void main(String[] args) throws Exception {
+//		Request<User> req=new Request<User>();
+//		User d=new User();
+//		d.setMobile("13730666347");
+//		d.setPassword(RSACoderTest.encode("123456"));
+//		req.setData(d);
+//		System.out.println(JsonHelper.getObjectMapperInstance().writeValueAsString(req));
+		
+		
+//		Request<RegistInfo> req=new Request<RegistInfo>();
+//		RegistInfo data=new RegistInfo();
+//		User u=new User();
+//		data.setYzm("123456");
+//		data.setUser(u);
+//		req.setData(data);
+//		System.out.println(JsonHelper.getObjectMapperInstance().writeValueAsString(req));
+		
+		 Request<String>  req=new Request<String>();
+		 req.setData("13730666347");
+		 System.out.println(JsonHelper.getObjectMapperInstance().writeValueAsString(req));
 	}
 }

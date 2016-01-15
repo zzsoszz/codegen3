@@ -1,6 +1,8 @@
 package com.bxtel.security5.auth.impl;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.bxtel.security5.auth.IAuthentication;
 import com.bxtel.security5.auth.IAuthenticationManager;
@@ -11,7 +13,10 @@ import com.bxtel.security5.auth.exceiption.NoIAuthDeallException;
 
 @Component
 public class AuthenticationManagerImpl implements IAuthenticationManager{
+	
+	@Autowired
 	List<IAuthentication>  authenticationlist;
+	
 	@Override
 	public IAuthenticationResponse authenticate(AbsAuthenticationRequest authentication) throws AuthenticationException {
 		for(IAuthentication auth:authenticationlist)

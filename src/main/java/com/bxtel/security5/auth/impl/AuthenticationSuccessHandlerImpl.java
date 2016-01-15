@@ -3,7 +3,6 @@ package com.bxtel.security5.auth.impl;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
@@ -18,6 +17,7 @@ import com.bxtel.security5.auth.IAuthenticationResponse;
 import com.bxtel.security5.auth.IAuthenticationSuccessHandler;
 import com.bxtel.security5.filter.RememberMeFiilter;
 import com.bxtel.security5.filter.SecurityConfig;
+import com.bxtel.user.model.User;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,34 +95,33 @@ public class AuthenticationSuccessHandlerImpl implements IAuthenticationSuccessH
 			kv.setData(Guid.getUniqueId());
 			outputJson(response, kv);
 		}else
-		{//重定向网页
-			
-			String autologin = request.getParameter("autologin");// true 自动登录
-			if ("true".equals(autologin)) {
-				int seconds = 7 * 24 * 60 * 60;// 保存7天
-				long expiretime = System.currentTimeMillis() + seconds;
-				String cookievalue = null;
-				String cookievaluebase64 = null;
-				try {
-					cookievalue = new Long(expiretime).toString() + RememberMeFiilter.DELIMITER
-							+ new String(Base64.encode(username.getBytes())) + RememberMeFiilter.DELIMITER
-							+ ThreeDesHelper2.encode(password);
-					cookievaluebase64 = new String(Base64.encode(cookievalue.getBytes()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, cookievaluebase64);
-				cookie.setMaxAge(Integer.MAX_VALUE);
-				cookie.setPath(RememberMeFiilter.getCookiePath(request));
-				response.addCookie(cookie);
-			} else {
-				Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
-				cookie.setMaxAge(0);
-				cookie.setPath(getCookiePath(request));
-				response.addCookie(cookie);
-			}
-			
-			
+		{
+			//重定向网页
+//			
+//			User user=(User)authentication.getUserData();
+//			String autologin = request.getParameter("autologin");// true 自动登录
+//			if ("true".equals(autologin)) {
+//				int seconds = 7 * 24 * 60 * 60;// 保存7天
+//				long expiretime = System.currentTimeMillis() + seconds;
+//				String cookievalue = null;
+//				String cookievaluebase64 = null;
+//				try {
+//					cookievalue = new Long(expiretime).toString() + RememberMeFiilter.DELIMITER+ new String(Base64.encode(user.getMobile().getBytes())) + RememberMeFiilter.DELIMITER+ ThreeDesHelper2.encode(user.getPassword());
+//					cookievaluebase64 = new String(Base64.encode(cookievalue.getBytes()));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, cookievaluebase64);
+//				cookie.setMaxAge(Integer.MAX_VALUE);
+//				cookie.setPath(RememberMeFiilter.getCookiePath(request));
+//				response.addCookie(cookie);
+//			} else {
+//				Cookie cookie = new Cookie(RememberMeFiilter.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
+//				cookie.setMaxAge(0);
+//				cookie.setPath(getCookiePath(request));
+//				response.addCookie(cookie);
+//			}
+//			
 			String sucessurl = getRedirectUrl(request, response);
 			logger.debug("sucessurl:"+sucessurl);
 			response.sendRedirect(sucessurl);

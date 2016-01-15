@@ -96,7 +96,6 @@ public class RememberMeFiilter  extends GenericFilterBean {
 		}
 		filterChain.doFilter(arg0, arg1);
 	}
-
 	
 	public static String getCookiePath(HttpServletRequest request) {
 	        String contextPath = request.getContextPath();

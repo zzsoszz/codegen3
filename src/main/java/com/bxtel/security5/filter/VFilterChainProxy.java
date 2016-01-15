@@ -20,7 +20,7 @@ public class VFilterChainProxy extends GenericFilterBean {
 		VFilterChain vchain=getFilter(request);
 		vchain.doFilter(request, response);
 		//返回调用父链
-		chain.doFilter(request, response);
+		//chain.doFilter(request, response);
 	}
 	public void setFilterChainMap(Map<RequestMatcher, VFilterChain> filterChainMap) {
 		this.filterChainMap=filterChainMap;

@@ -1,7 +1,7 @@
 package com.bxtel.security5.auth.exceiption;
 
 /**
- * Thrown if an {@link UserDetailsService} implementation cannot locate a {@link User} by its username.
+ * Thrown if an {@link UserDetailsService} implementation cannot locate a {@link RegistInfo} by its username.
  *
  * @author Ben Alex
  */

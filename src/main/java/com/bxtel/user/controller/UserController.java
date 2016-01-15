@@ -3,6 +3,10 @@ import com.bxtel.sms.bo.*;
 import com.bxtel.sms.model.*;
 import com.bxtel.user.bo.UserBO;
 import com.bxtel.user.model.User;
+import com.bxtel.user.vo.RegistInfo;
+
+import dinamica.guid.Guid;
+
 import com.bxtel.commons.Request;
 import com.bxtel.commons.Response;
 import com.bxtel.commons.SearchData;
@@ -12,6 +16,8 @@ import com.bxtel.security5.auth.IAuthenticationSuccessHandler;
 
 import java.util.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.Cache.ValueWrapper;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,30 +43,60 @@ import org.apache.commons.logging.LogFactory;
 @Controller
 @RequestMapping(value = "/user")
 public class UserController extends MultiActionController {
+	private static final Log logger = LogFactory.getLog(UserController.class);
 	
 	@Autowired
 	public UserBO  bo;
-	
-    private static final Log logger = LogFactory.getLog(UserController.class);
-    
     @Autowired
 	private IAuthenticationManager  authenticationManager;
 	@Autowired
 	private IAuthenticationSuccessHandler successHandler = null;
-	
+	@Autowired
+	CacheManager cacheManager;
 	
     @RequestMapping(value = "docreate")
     @ResponseBody
-    public User docreate(@RequestBody Request<User> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
-    	return bo.add(req.getData());
+    public Response docreate(@RequestBody Request<RegistInfo> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
+    	Response resp=new Response();
+    	try
+    	{
+    		ValueWrapper yzm=cacheManager.getCache("yzm").get("mobile");
+    		if(!req.getData().getYzm().equals(yzm.get()))
+    		{
+    			resp.setReturncode("00000002");
+        		resp.setReturnmsg("验证码错误!");
+    		}
+    		bo.add(req.getData().getUser());
+    		resp.setReturncode("00000000");
+    		resp.setReturnmsg("处理成功!");
+    	}catch(Exception ex)
+    	{
+    		resp.setReturncode("00000001");
+    		resp.setReturncode("系统异常");
+    	}
+    	return resp;
 	}
     
-    @RequestMapping(value = "dologin")
+    
+    @RequestMapping(value = "sendyzm")
     @ResponseBody
-    public User dologin(@RequestBody Request<User> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
-    	
-    	return null;
+    public Response sendyzm(@RequestBody Request<String> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
+    	Response resp=new Response();
+    	try
+    	{
+    		String yzm=Guid.genRandom(6);
+    		cacheManager.getCache("yzm").put("mobile",yzm);
+    		bo.sendyzm(req.getData(),yzm);
+    		resp.setReturncode("00000000");
+    		resp.setReturnmsg("处理成功!");
+    	}catch(Exception ex)
+    	{
+    		resp.setReturncode("00000001");
+    		resp.setReturncode("系统异常");
+    	}
+    	return resp;
 	}
+    
     
     /*
      * search_LIKE_title

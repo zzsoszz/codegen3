@@ -2,6 +2,7 @@ package com.bxtel.user.bo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -54,11 +55,12 @@ public class UserBO
 		p.getContent();
 		return p;
 	}
-	
 	public User add(User data) {
 		return dao.save(data);
 	}
-	
+	public void sendyzm(String mobile,String yzm) {
+		
+	}
 }
 
 

@@ -1,9 +1,10 @@
 package com.bxtel.security5.filter;
 
 import java.io.IOException;
+
+import javax.annotation.Resource;
 import javax.servlet.*;
 import javax.servlet.http.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.filter.GenericFilterBean;
@@ -15,11 +16,19 @@ import com.bxtel.security5.auth.IAuthenticationSuccessHandler;
 import com.bxtel.security5.auth.exceiption.UsernameNotFoundException;
 import com.bxtel.security5.auth.impl.UserNamePaswordAuthenticationRequest;
 import com.bxtel.user.model.User;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import dinamica.coder.MD5Helper;
 import dinamica.coder.RSACoderTest;
 import dinamica.coder.ThreeDesHelper2;
 import dinamica.util.JsonHelper;
 
+/*
+ * http://127.0.0.1:9000/j_spring_security_check
+ * {"returncode":"00000000","returnmsg":"登录成功","data":"513845777118793728"}
+ * 
+ * 
+ */
 public class UsernamePasswordLoginFilter extends GenericFilterBean {
 	String requesturl = "/j_spring_security_check";
 	String entrypoint = SecurityConfig.entrypoint;
@@ -27,8 +36,9 @@ public class UsernamePasswordLoginFilter extends GenericFilterBean {
 	private IAuthenticationManager authenticationManager;
 	@Autowired
 	private IAuthenticationSuccessHandler successHandler = null;
-
-
+	@Resource
+	MySecurityContextHolder mySecurityContextHolder;
+	
 	public void doFilter(ServletRequest request0, ServletResponse response1, FilterChain filterChain)
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) request0;
@@ -36,25 +46,25 @@ public class UsernamePasswordLoginFilter extends GenericFilterBean {
 		if (request.getRequestURI().endsWith(requesturl)) {
 			String username = request.getParameter("j_username");
 			String password = request.getParameter("j_password");
-			
 			boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 			if (isAjax) {
-				Request<User> req=JsonHelper.getObjectMapperInstance().readValue(request.getInputStream(), Request.class);
+				Request<User> req=JsonHelper.getObjectMapperInstance().readValue(request.getInputStream(), new TypeReference<Request<User>>() {});
 				username=req.getData().getMobile();
-				try {
-					password=RSACoderTest.decode(req.getData().getPassword());
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new UsernameNotFoundException("password is invalid");
-				}
+				password=req.getData().getPassword();
 			}
-			
+			try
+			{
+				password=MD5Helper.md5(RSACoderTest.decode(password));
+			} catch (Exception e) {
+				throw new UsernameNotFoundException("password is invalid");
+			}
 			if (username == null || password == null || password.isEmpty() || username.isEmpty()) {
 				throw new UsernameNotFoundException("username and password must not be null");
 			}
 			UserNamePaswordAuthenticationRequest authRequest = new UserNamePaswordAuthenticationRequest(username,password);
 			IAuthenticationResponse authResult = authenticationManager.authenticate(authRequest);
-			request.getSession(true).setAttribute("securitycontext", authResult);
+			//request.getSession(true).setAttribute("securitycontext", authResult);
+			mySecurityContextHolder.setSecurityContext(authResult, request,response);
 			if (successHandler != null) {
 				successHandler.onAuthenticationSuccess(request, response, authResult);
 			}
