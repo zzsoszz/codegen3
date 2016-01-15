@@ -243,6 +243,10 @@
 	</build>
 	
 	<!-- 
+	Maven简介（六）——Dependency
+	http://haohaoxuexi.iteye.com/blog/2057317
+		写了个输出批量安装jar文件到本地maven repository的小程序
+	http://my.oschina.net/webas/blog/108427
 	http://stackoverflow.com/questions/10935135/maven-and-adding-jars-to-system-scope
 	<plugin><artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>      <configuration>
