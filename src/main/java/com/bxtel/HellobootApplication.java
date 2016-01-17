@@ -53,7 +53,7 @@ public class HellobootApplication extends SpringBootServletInitializer{
 	//ServletComponentScan ss;
 	//RedisProperties aa;
 	//http://www.open-open.com/lib/view/open1436322883958.html
-	
+	//org.springframework.context.event.GenericApplicationListener
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(HellobootApplication.class);

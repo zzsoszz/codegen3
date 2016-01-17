@@ -54,6 +54,7 @@ public class UserController extends MultiActionController {
 	@Autowired
 	CacheManager cacheManager;
 	
+	
     @RequestMapping(value = "docreate")
     @ResponseBody
     public Response docreate(@RequestBody Request<RegistInfo> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
@@ -78,9 +79,9 @@ public class UserController extends MultiActionController {
 	}
     
     
-    @RequestMapping(value = "sendyzm")
+    @RequestMapping(value = "dosendyzm")
     @ResponseBody
-    public Response sendyzm(@RequestBody Request<String> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
+    public Response dosendyzm(@RequestBody Request<String> req,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
     	Response resp=new Response();
     	try
     	{
@@ -97,23 +98,22 @@ public class UserController extends MultiActionController {
     	return resp;
 	}
     
-    
     /*
      * search_LIKE_title
      * sort_DESC_title
      */
-    @RequestMapping(value = "search")
+    @RequestMapping(value = "dosearch")
     @ResponseBody
-    public Page<User> search(Integer page,Integer pagesize,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
+    public Page<User> dosearch(Integer page,Integer pagesize,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
     	Map<String, Object> search = Servlets.getParametersStartingWith(request, "search_");
     	Map<String, Object> sort = Servlets.getParametersStartingWith(request, "sort_");
     	return bo.search(search,sort,page,pagesize);
 	}
     
     
-    @RequestMapping(value = "searchforjson")
+    @RequestMapping(value = "dosearchforjson")
     @ResponseBody
-    public Response<Page<User>> searchforjson(@RequestBody Request<SearchData> req)  throws Exception, BusinessException {
+    public Response<Page<User>> dosearchforjson(@RequestBody Request<SearchData> req)  throws Exception, BusinessException {
     	Response<Page<User>> resp=new Response<Page<User>>();
     	try
     	{
@@ -126,6 +126,7 @@ public class UserController extends MultiActionController {
 		}
     	return resp;
 	}
+    
     
 //    
 //    @RequestMapping
@@ -153,7 +154,6 @@ public class UserController extends MultiActionController {
 //		}
 //        return mav;
 //    }
-//    
 //    
 //    @RequestMapping
 //    public ModelAndView showedit(Sms model,HttpServletRequest request, 
