@@ -1,22 +1,12 @@
 package com.bxtel;
 
-import java.io.File;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
-import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.startup.Tomcat;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.filter.DelegatingFilterProxy;
-
-import com.bxtel.security5.filter.VFilterChainProxy;
 
 /*
  * Servlet3.0规范，支持将web.xml相关配置也硬编码到代码中[servlet，filter，listener,等等]，并由javax.servlet.ServletContainerInitializer的实现类负责在容器启动时进行加载，

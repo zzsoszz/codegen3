@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springside.modules.web.Servlets;
 import org.apache.commons.logging.Log;
@@ -54,6 +55,7 @@ public class UserController extends MultiActionController {
 	@Autowired
 	CacheManager cacheManager;
 	
+	DispatcherServlet aa;
 	
     @RequestMapping(value = "docreate")
     @ResponseBody

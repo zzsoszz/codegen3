@@ -15,7 +15,6 @@
 		<java.version>1.8</java.version>
 	</properties>
 	<repositories>
-		<!--  -->
 		<repository>
             			<id>nexus</id>
             			<name>local private nexus</name>
@@ -50,12 +49,19 @@
 	
 	<dependencies>
 		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<!-- 
+		<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>taobaosdk</artifactId>
 				<version>1.0.0</version>
 				<scope>system</scope>
 				<systemPath>${project.basedir}/extlib/taobao-sdk-java-auto_1452788057542-20160115.jar</systemPath>
 		</dependency>
+		 -->
+		 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
@@ -90,6 +96,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
+		<dependency>
+	       <groupId>org.springframework.security</groupId>
+	       <artifactId>spring-security-config</artifactId>
+	    </dependency>
 		<!-- 
 		<dependency>  
 	        <groupId>org.springframework.boot</groupId>  
@@ -100,6 +110,12 @@
 			<artifactId>spring-session</artifactId>
 		</dependency>
 		 -->
+		
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.4.0</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -114,11 +130,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc14</artifactId>
-			<version>10.2.0.4.0</version>
 		</dependency>
 	  	<dependency>
 			<groupId>com.googlecode.log4jdbc</groupId>
@@ -187,7 +198,18 @@
 			<artifactId>velocity</artifactId>
 		</dependency>
 		 -->
-		
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+  		 -->
   	</dependencies>
   	
   	

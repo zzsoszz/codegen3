@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import com.bxtel.commons.Request;
 import com.bxtel.commons.SearchData;
@@ -40,6 +41,7 @@ public class SystemInitServlet extends HttpServlet{
 			System.out.println("servletcontextkey:"+str);
 			//key:payController   value:com.bxtel.bxpay.controller.PayController@18c26d7
 		}
+		//DispatcherServletAutoConfiguration;
 		//jstl-servlet.xml 上线文
 		ApplicationContext   ctx= (ApplicationContext) servletContext.getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
 		ListableBeanFactory cc = (ListableBeanFactory)ctx;
@@ -48,13 +50,19 @@ public class SystemInitServlet extends HttpServlet{
 		while(it.hasNext())
 		{
 			String key=it.next();//TongchengClient BxBankCardTBO
-			System.out.println("key:"+key+"   value:"+aa.get(key));
+			System.out.println("springbeankey:"+key+"   value:"+aa.get(key));
 			if(key.equals("logoutFilter"))
 			{
 				
 			}
 		}
 		SmsBO  smsbo=(SmsBO) ctx.getBean(SmsBO.class);
+		
+		
+		DispatcherServlet  dis=(DispatcherServlet) ctx.getBean(DispatcherServlet.class);
+		System.out.println(dis);
+		
+		
 		Sms model=new Sms();
 		model.setMobile("13730666347");
 		model.setContent("hello boy !!!");

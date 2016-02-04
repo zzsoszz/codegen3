@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 /*
  * plugin --install mobz/elasticsearch-head
  * http://localhost:9200/_plugin/head/
@@ -34,15 +35,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //@SpringBootApplication
 @Configuration
 @ComponentScan
-@EnableAutoConfiguration(exclude = {
+@EnableAutoConfiguration(
+		exclude = {
 		org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
-		org.springframework.boot.autoconfigure.security.SecurityFilterAutoConfiguration.class,
-		org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.class
-})
+		org.springframework.boot.autoconfigure.security.SecurityFilterAutoConfiguration.class
+		//,org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.class
+		}
+)
 @EnableScheduling
 @ServletComponentScan
 @EnableAspectJAutoProxy
 @EnableCaching
+//@EnableWebMvc
 @EnableTransactionManagement
 //@EnableRedisHttpSession
 //@EnableWebMvcSecurity
@@ -54,6 +58,7 @@ public class HellobootApplication extends SpringBootServletInitializer{
 	//RedisProperties aa;
 	//http://www.open-open.com/lib/view/open1436322883958.html
 	//org.springframework.context.event.GenericApplicationListener
+	//AutoConfigurationReportLoggingInitializer
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(HellobootApplication.class);

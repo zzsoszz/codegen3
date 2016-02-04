@@ -124,6 +124,7 @@ public class HellobootConfiguration  implements CachingConfigurer {
 	    return f;
 	}
 	
+	
 	/*
 	 * http://www.leveluplunch.com/blog/2014/04/01/spring-boot-configure-servlet-mapping-filters/]
 	 * 
